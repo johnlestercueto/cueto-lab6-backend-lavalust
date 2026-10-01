@@ -262,11 +262,12 @@ $config['session_hmac_secret']     = getenv('APP_KEY') ?: '';
 $config['cookie_prefix']           = '';
 $config['cookie_domain']           = '';
 $config['cookie_path']             = '/';
-$is_production                     = strtolower($config['environment']) === 'production';
-$config['cookie_secure']           = $is_production;
+$forwarded_proto                  = strtolower(trim(explode(',', $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')[0]));
+$is_https                          = (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') || $forwarded_proto === 'https';
+$config['cookie_secure']           = $is_https;
 $config['cookie_expiration']       = 86400;
 $config['cookie_httponly']         = FALSE;
-$config['cookie_samesite']         = $is_production ? 'None' : 'Strict';
+$config['cookie_samesite']         = $is_https ? 'None' : 'Strict';
 
 /*
 |--------------------------------------------------------------------------
